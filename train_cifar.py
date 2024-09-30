@@ -183,7 +183,7 @@ def main(args):
     opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=0)
 
     # Setup data:
-    if dataset_name == 'cifar10':
+    if args.dataset_name == 'cifar10':
         transform = transforms.Compose([
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
@@ -255,9 +255,10 @@ def main(args):
         for x, y in loader:
             x = x.to(device)
             y = y.to(device)
-            with torch.no_grad():
+            # with torch.no_grad():
                 # Map input images to latent space + normalize latents:
                 # x = vae.encode(x).latent_dist.sample().mul_(0.18215)
+
             model_kwargs = dict(y=y)
             loss_dict = transport.training_losses(model, x, model_kwargs)
             loss = loss_dict["loss"].mean()
@@ -344,6 +345,7 @@ if __name__ == "__main__":
     parser.add_argument("--sample-every", type=int, default=10_000)
     parser.add_argument("--cfg-scale", type=float, default=4.0)
     parser.add_argument("--wandb", action="store_true")
+    parser.add_argument("--dataset_name", type=str, default='cifar10')
     parser.add_argument("--ckpt", type=str, default=None,
                         help="Optional path to a custom SiT checkpoint")
 
